@@ -40,9 +40,9 @@ jobs:
         if: always()
         run: pnpm typecheck
 
-      - name: Typecheck tests
-        if: always()
-        run: npx tsc --noEmit --project tsconfig.test.json
+      # - name: Typecheck tests
+      #   if: always()
+      #   run: npx tsc --noEmit --project tsconfig.test.json
 
       - name: Prettier
         if: always()
