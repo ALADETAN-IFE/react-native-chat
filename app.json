@@ -20,7 +20,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.ifecodes.reactnativechat"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -36,9 +37,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "ec8d0d99-6ff4-4ba9-8f50-98ecbf600d8e"
+        "projectId": "16d8eb27-7dbf-48cc-ba5f-6fb44b74a811"
       }
     },
-    "owner": "ifecodes"
+    "owner": "ifecodes01"
   }
 }
