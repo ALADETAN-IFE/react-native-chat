@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "react-native-chat-starter",
-    "slug": "react-native-chat-starter",
+    "name": "react-native-chat",
+    "slug": "react-native-chat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "react-native-chat-starter",
+    "scheme": "react-native-chat",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -32,6 +32,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ec8d0d99-6ff4-4ba9-8f50-98ecbf600d8e"
+      }
+    },
+    "owner": "ifecodes"
   }
 }
