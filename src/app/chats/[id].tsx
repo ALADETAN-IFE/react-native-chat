@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { MessageBubble } from '@/components/MessageBubble';
 import { TypingDots } from '@/components/TypingDots';
@@ -49,6 +50,7 @@ export default function ChatRoom() {
     displayMessages,
   } = useChatRoom(id);
 
+  const insets = useSafeAreaInsets();
   const flatListRef = useRef<FlatList>(null);
 
   // Auto-scroll to bottom on new messages
@@ -63,9 +65,9 @@ export default function ChatRoom() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={0}
+      style={[styles.container, { paddingTop: insets.top }]}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
     >
       <ChatHeader
         otherName={otherName}
@@ -94,34 +96,35 @@ export default function ChatRoom() {
         </View>
       )}
 
-      {/* Messages */}
-      <FlatList
-        ref={flatListRef}
-        data={displayMessages}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <MessageBubble
-            message={item}
-            conversationId={id}
-            currentUid={currentUid}
-            searchTerm={searchTerm}
-            onImagePress={(uri) => setViewerUri(uri)}
-            onEditPress={handleEditPress}
-          />
-        )}
-        ListEmptyComponent={
-          searchTerm ? null : (
-            <View style={styles.emptyChat}>
-              <Ionicons name="chatbubble-outline" size={40} color="#d1d5db" />
-              <Text style={styles.emptyChatText}>No messages yet. Say hi!</Text>
-            </View>
-          )
-        }
-      />
+      <View style={styles.messagesArea}>
+        <FlatList
+          ref={flatListRef}
+          data={displayMessages}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          keyboardShouldPersistTaps="handled"
+          renderItem={({ item }) => (
+            <MessageBubble
+              message={item}
+              conversationId={id}
+              currentUid={currentUid}
+              searchTerm={searchTerm}
+              onImagePress={(uri) => setViewerUri(uri)}
+              onEditPress={handleEditPress}
+            />
+          )}
+          ListEmptyComponent={
+            searchTerm ? null : (
+              <View style={styles.emptyChat}>
+                <Ionicons name="chatbubble-outline" size={40} color="#d1d5db" />
+                <Text style={styles.emptyChatText}>No messages yet. Say hi!</Text>
+              </View>
+            )
+          }
+        />
 
-      {/* Typing dots */}
-      {otherIsTyping && <TypingDots />}
+        {otherIsTyping && <TypingDots />}
+      </View>
 
       <ChatComposer
         text={text}
@@ -144,7 +147,8 @@ export default function ChatRoom() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingTop: 56 },
+  container: { flex: 1, backgroundColor: '#fff' },
+  messagesArea: { flex: 1 },
   offlineBanner: {
     flexDirection: 'row',
     backgroundColor: '#fef3c7',

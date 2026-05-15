@@ -1,4 +1,5 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '@/types/message';
 import { AudioRecorder } from './AudioMessage';
@@ -24,8 +25,11 @@ export function ChatComposer({
   onPickMedia,
   onAudioRecorded,
 }: Props) {
+  const { bottom } = useSafeAreaInsets();
+  const bottomPad = Math.max(bottom, Platform.OS === 'android' ? 24 : 8);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: bottomPad }]}>
       {editingMessage && (
         <View style={styles.editBanner}>
           <View style={styles.editBannerLabel}>
@@ -125,7 +129,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     fontSize: 15,
     maxHeight: 100,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#fff',
+    color: '#111',
   },
   sendButton: {
     backgroundColor: '#222',
