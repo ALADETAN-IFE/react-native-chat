@@ -3,10 +3,10 @@ import {
   View,
   Image,
   TouchableOpacity,
-  Text,
   StyleSheet,
   Dimensions,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,7 +20,7 @@ export function MediaViewer({ uri, onClose }: Props) {
     <Modal visible={!!uri} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.close} onPress={onClose}>
-          <Text style={styles.closeText}>✕</Text>
+          <Ionicons name="close" size={22} color="#fff" />
         </TouchableOpacity>
         {uri && <Image source={{ uri }} style={styles.image} resizeMode="contain" />}
       </View>
@@ -47,6 +47,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  closeText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   image: { width, height: height * 0.85 },
 });

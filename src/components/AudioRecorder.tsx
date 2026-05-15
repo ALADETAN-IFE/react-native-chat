@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
+import { Ionicons } from '@expo/vector-icons';
 
 interface AudioRecorderProps {
   onRecorded: (uri: string, duration: number) => void;
@@ -46,7 +47,7 @@ export function AudioRecorder({ onRecorded }: AudioRecorderProps) {
           <Text style={styles.txtActive}>Stop</Text>
         </View>
       ) : (
-        <Text style={styles.txt}>🎙️</Text>
+        <Ionicons name="mic-outline" size={22} color="#374151" />
       )}
     </TouchableOpacity>
   );
@@ -65,6 +66,5 @@ const styles = StyleSheet.create({
   btnActive: { backgroundColor: '#fee2e2' },
   row: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   redDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: 'red' },
-  txt: { fontSize: 20 },
   txtActive: { fontSize: 12, color: 'red', fontWeight: '600' },
 });

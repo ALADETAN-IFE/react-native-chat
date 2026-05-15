@@ -11,6 +11,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { Message } from '@/types/message';
+import { getLastMessagePreview } from '@/utils/messagePreview';
 
 type SendMessagePayload = Omit<Message, 'id' | 'createdAt' | 'status'>;
 
@@ -21,14 +22,7 @@ export async function sendMessage(conversationId: string, payload: SendMessagePa
     createdAt: serverTimestamp(),
   });
 
-  const preview =
-    payload.type === 'text'
-      ? payload.text
-      : payload.type === 'audio'
-        ? '🎵 Audio message'
-        : payload.type === 'image'
-          ? '📷 Image'
-          : '🎥 Video';
+  const preview = getLastMessagePreview(payload);
 
   await updateDoc(doc(db, 'conversations', conversationId), {
     lastMessage: preview,

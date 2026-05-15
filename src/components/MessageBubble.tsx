@@ -4,6 +4,7 @@ import { arrayUnion, arrayRemove, doc, updateDoc, deleteDoc } from 'firebase/fir
 import { db } from '@/firebase';
 import { Message } from '@/types/message';
 import { ReactionPicker } from './ReactionPicker';
+import { ReactionIcon } from './ReactionIcon';
 import { MessageMenu } from './MessageMenu';
 import { MessageContent, StatusIcon } from './MessageContent';
 
@@ -33,10 +34,10 @@ export function MessageBubble({
 
   const msgRef = doc(db, 'conversations', conversationId, 'messages', message.id);
 
-  const handleReaction = async (emoji: string) => {
-    const alreadyReacted = message.reactions?.[emoji]?.includes(currentUid);
+  const handleReaction = async (reactionKey: string) => {
+    const alreadyReacted = message.reactions?.[reactionKey]?.includes(currentUid);
     await updateDoc(msgRef, {
-      [`reactions.${emoji}`]: alreadyReacted
+      [`reactions.${reactionKey}`]: alreadyReacted
         ? arrayRemove(currentUid)
         : arrayUnion(currentUid),
     });
@@ -85,13 +86,13 @@ export function MessageBubble({
       {/* Reactions display */}
       {reactionEntries.length > 0 && (
         <View style={styles.reactionsRow}>
-          {reactionEntries.map(([emoji, uids]) => (
+          {reactionEntries.map(([reactionKey, uids]) => (
             <TouchableOpacity
-              key={emoji}
-              onPress={() => handleReaction(emoji)}
+              key={reactionKey}
+              onPress={() => handleReaction(reactionKey)}
               style={styles.reactionBadge}
             >
-              <Text style={styles.reactionEmoji}>{emoji}</Text>
+              <ReactionIcon reactionKey={reactionKey} size={14} />
               <Text style={styles.reactionCount}>{uids.length}</Text>
             </TouchableOpacity>
           ))}
@@ -140,6 +141,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e7eb',
   },
-  reactionEmoji: { fontSize: 13 },
   reactionCount: { fontSize: 11, color: '#374151', fontWeight: '600' },
 });

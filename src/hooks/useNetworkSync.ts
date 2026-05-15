@@ -3,6 +3,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useChatStore } from '@/stores/chatStore';
+import { getLastMessagePreview } from '@/utils/messagePreview';
 
 export function useNetworkSync() {
   const { setOnline, offlineQueue, dequeueMessage } = useChatStore();
@@ -23,14 +24,7 @@ export function useNetworkSync() {
               createdAt: serverTimestamp(),
             });
 
-            const preview =
-              payload.type === 'text'
-                ? payload.text
-                : payload.type === 'audio'
-                  ? '🎵 Audio message'
-                  : payload.type === 'image'
-                    ? '📷 Image'
-                    : '🎥 Video';
+            const preview = getLastMessagePreview(payload);
 
             await updateDoc(doc(db, 'conversations', conversationId), {
               lastMessage: preview,

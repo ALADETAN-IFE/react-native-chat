@@ -3,6 +3,7 @@ import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestor
 import { auth, db } from '@/firebase';
 import { Conversation } from '@/types/conversation';
 import { useChatStore } from '@/stores/chatStore';
+import { getFirestoreErrorMessage } from '@/utils/errors';
 
 export function useConversations() {
   const { conversations, setConversations } = useChatStore();
@@ -27,8 +28,8 @@ export function useConversations() {
         );
         setLoading(false);
       },
-      (err: Error) => {
-        setError(err.message);
+      (err) => {
+        setError(getFirestoreErrorMessage(err));
         setLoading(false);
       },
     );

@@ -5,6 +5,10 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import type { ComponentProps } from 'react';
+
+type IconName = ComponentProps<typeof Ionicons>['name'];
 
 export function LoadingState({ message = 'Loading...' }: { message?: string }) {
   return (
@@ -24,7 +28,7 @@ export function ErrorState({
 }) {
   return (
     <View style={styles.center}>
-      <Text style={styles.errorIcon}>⚠️</Text>
+      <Ionicons name="warning-outline" size={48} color="#f59e0b" />
       <Text style={styles.errorText}>{message}</Text>
       <TouchableOpacity style={styles.retryBtn} onPress={onRetry}>
         <Text style={styles.retryText}>Try again</Text>
@@ -38,13 +42,13 @@ export function EmptyState({
   title,
   subtitle,
 }: {
-  icon: string;
+  icon: IconName;
   title: string;
   subtitle?: string;
 }) {
   return (
     <View style={styles.center}>
-      <Text style={styles.emptyIcon}>{icon}</Text>
+      <Ionicons name={icon} size={48} color="#d1d5db" />
       <Text style={styles.emptyTitle}>{title}</Text>
       {subtitle && <Text style={styles.emptySubtitle}>{subtitle}</Text>}
     </View>
@@ -60,7 +64,6 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   loadingText: { color: '#6b7280', fontSize: 14, marginTop: 8 },
-  errorIcon: { fontSize: 40 },
   errorText: { color: '#374151', fontSize: 15, textAlign: 'center' },
   retryBtn: {
     backgroundColor: '#222',
@@ -70,7 +73,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   retryText: { color: '#fff', fontWeight: '600' },
-  emptyIcon: { fontSize: 48 },
   emptyTitle: { color: '#111', fontSize: 17, fontWeight: '600', textAlign: 'center' },
   emptySubtitle: { color: '#6b7280', fontSize: 14, textAlign: 'center' },
 });

@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Audio } from 'expo-av';
+import { Ionicons } from '@expo/vector-icons';
 
 interface AudioPlayerProps {
   url: string;
@@ -56,7 +57,7 @@ export function AudioPlayer({ url, duration }: AudioPlayerProps) {
         {loading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Text style={styles.playIcon}>{playing ? '⏸' : '▶️'}</Text>
+          <Ionicons name={playing ? 'pause' : 'play'} size={18} color="#fff" />
         )}
       </TouchableOpacity>
       <Text style={styles.duration}>{duration ? `${duration}s` : '—'}</Text>
@@ -82,7 +83,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  playIcon: { fontSize: 16 },
   duration: { color: '#fff', fontSize: 12, minWidth: 28 },
   speedBtn: {
     backgroundColor: 'rgba(255,255,255,0.2)',

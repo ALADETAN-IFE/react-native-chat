@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { EmptyState } from '@/components/StateViews';
 import { useUserSearch } from '@/hooks/useUserSearch';
@@ -19,7 +20,7 @@ export default function NewChat() {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="chevron-back" size={24} color="#222" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>New Chat</Text>
       </View>
@@ -52,7 +53,7 @@ export default function NewChat() {
 
       {searched && !loading && results.length === 0 && (
         <EmptyState
-          icon="🔍"
+          icon="search-outline"
           title="No users found"
           subtitle="Try a different name or email"
         />
@@ -91,7 +92,6 @@ const styles = StyleSheet.create({
     borderColor: '#f3f4f6',
   },
   backBtn: { padding: 4 },
-  backText: { fontSize: 22, color: '#222' },
   headerTitle: { fontSize: 18, fontWeight: '700' },
   searchRow: {
     flexDirection: 'row',

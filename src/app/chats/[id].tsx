@@ -8,6 +8,7 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { MessageBubble } from '@/components/MessageBubble';
 import { TypingDots } from '@/components/TypingDots';
@@ -80,7 +81,8 @@ export default function ChatRoom() {
       {/* Offline banner */}
       {!isOnline && (
         <View style={styles.offlineBanner}>
-          <Text style={styles.offlineText}>📵 Offline — messages will be queued</Text>
+          <Ionicons name="cloud-offline-outline" size={16} color="#92400e" />
+          <Text style={styles.offlineText}>Offline — messages will be queued</Text>
         </View>
       )}
 
@@ -111,7 +113,8 @@ export default function ChatRoom() {
         ListEmptyComponent={
           searchTerm ? null : (
             <View style={styles.emptyChat}>
-              <Text style={styles.emptyChatText}>No messages yet. Say hi! 👋</Text>
+              <Ionicons name="chatbubble-outline" size={40} color="#d1d5db" />
+              <Text style={styles.emptyChatText}>No messages yet. Say hi!</Text>
             </View>
           )
         }
@@ -143,9 +146,12 @@ export default function ChatRoom() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff', paddingTop: 56 },
   offlineBanner: {
+    flexDirection: 'row',
     backgroundColor: '#fef3c7',
     padding: 8,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   offlineText: { fontSize: 12, color: '#92400e' },
   uploadingBanner: {
@@ -158,6 +164,6 @@ const styles = StyleSheet.create({
   },
   uploadingText: { color: '#fff', fontSize: 13 },
   list: { paddingVertical: 12, gap: 2 },
-  emptyChat: { flex: 1, alignItems: 'center', paddingTop: 60 },
+  emptyChat: { flex: 1, alignItems: 'center', paddingTop: 60, gap: 12 },
   emptyChatText: { color: '#9ca3af', fontSize: 14 },
 });

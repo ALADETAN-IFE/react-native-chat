@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 interface Props {
@@ -33,7 +34,7 @@ export function ChatHeader({
     <>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="chevron-back" size={24} color="#222" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerName}>{otherName}</Text>
@@ -44,8 +45,9 @@ export function ChatHeader({
             setSearchVisible((v) => !v);
             setSearchTerm('');
           }}
+          style={styles.searchBtn}
         >
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Ionicons name="search-outline" size={22} color="#222" />
         </TouchableOpacity>
       </View>
 
@@ -79,11 +81,10 @@ const styles = StyleSheet.create({
     borderColor: '#f3f4f6',
   },
   backBtn: { padding: 4 },
-  backText: { fontSize: 22, color: '#222' },
   headerCenter: { flex: 1 },
   headerName: { fontSize: 16, fontWeight: '700', color: '#111' },
   typingLabel: { fontSize: 11, color: '#9ca3af', marginTop: 1 },
-  searchIcon: { fontSize: 20, padding: 4 },
+  searchBtn: { padding: 4 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',

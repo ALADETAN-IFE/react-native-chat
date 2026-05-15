@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-
-const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🔥'];
+import { View, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { REACTION_OPTIONS, ReactionId } from '@/utils/reactions';
 
 interface Props {
   visible: boolean;
-  onSelect: (emoji: string) => void;
+  onSelect: (reactionId: ReactionId) => void;
   onClose: () => void;
 }
 
@@ -13,16 +13,16 @@ export function ReactionPicker({ visible, onSelect, onClose }: Props) {
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose}>
         <View style={styles.picker}>
-          {EMOJIS.map((emoji) => (
+          {REACTION_OPTIONS.map((reaction) => (
             <TouchableOpacity
-              key={emoji}
+              key={reaction.id}
               onPress={() => {
-                onSelect(emoji);
+                onSelect(reaction.id);
                 onClose();
               }}
-              style={styles.emojiBtn}
+              style={styles.reactionBtn}
             >
-              <Text style={styles.emoji}>{emoji}</Text>
+              <Ionicons name={reaction.icon} size={26} color={reaction.color} />
             </TouchableOpacity>
           ))}
         </View>
@@ -50,6 +50,5 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
   },
-  emojiBtn: { padding: 6 },
-  emoji: { fontSize: 26 },
+  reactionBtn: { padding: 6 },
 });

@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import {
+  View,
   TextInput,
   TouchableOpacity,
   Text,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   email: string;
@@ -33,9 +36,14 @@ export function LoginForm({
   onSignIn,
   onSignUp,
 }: Props) {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <>
-      <Text style={styles.title}>💬 ChatApp</Text>
+      <View style={styles.titleRow}>
+        <Ionicons name="chatbubbles" size={32} color="#111" />
+        <Text style={styles.title}>ChatApp</Text>
+      </View>
       <Text style={styles.subtitle}>
         {isSignUp ? 'Create an account' : 'Welcome back'}
       </Text>
@@ -57,13 +65,27 @@ export function LoginForm({
         value={email}
         onChangeText={setEmail}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+      <View style={styles.passwordRow}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Password"
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+          autoCapitalize="none"
+        />
+        <TouchableOpacity
+          style={styles.eyeBtn}
+          onPress={() => setShowPassword((v) => !v)}
+          accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+        >
+          <Ionicons
+            name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+            size={22}
+            color="#6b7280"
+          />
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity
         style={styles.button}
@@ -92,7 +114,14 @@ export function LoginForm({
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 32, fontWeight: '800', textAlign: 'center', marginBottom: 4 },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  title: { fontSize: 32, fontWeight: '800' },
   subtitle: { fontSize: 15, color: '#6b7280', textAlign: 'center', marginBottom: 12 },
   input: {
     borderWidth: 1,
@@ -102,6 +131,24 @@ const styles = StyleSheet.create({
     fontSize: 15,
     backgroundColor: '#f9fafb',
     marginBottom: 12,
+  },
+  passwordRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    backgroundColor: '#f9fafb',
+    marginBottom: 12,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 14,
+    fontSize: 15,
+  },
+  eyeBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   button: {
     backgroundColor: '#222',

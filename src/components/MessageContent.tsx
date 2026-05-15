@@ -7,13 +7,32 @@ import {
   StyleProp,
   TextStyle,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Message, MessageStatus } from '@/types/message';
 import { AudioPlayer } from './AudioMessage';
 
 export function StatusIcon({ status }: { status: MessageStatus }) {
-  if (status === 'seen') return <Text style={styles.statusSeen}>✓✓</Text>;
-  if (status === 'delivered') return <Text style={styles.statusDelivered}>✓✓</Text>;
-  return <Text style={styles.statusSent}>✓</Text>;
+  if (status === 'seen') {
+    return <Ionicons name="checkmark-done" size={14} color="#60a5fa" style={styles.statusIcon} />;
+  }
+  if (status === 'delivered') {
+    return (
+      <Ionicons
+        name="checkmark-done"
+        size={14}
+        color="rgba(255,255,255,0.6)"
+        style={styles.statusIcon}
+      />
+    );
+  }
+  return (
+    <Ionicons
+      name="checkmark"
+      size={14}
+      color="rgba(255,255,255,0.4)"
+      style={styles.statusIcon}
+    />
+  );
 }
 
 export function HighlightedText({
@@ -81,7 +100,7 @@ export function MessageContent({
             <View style={[styles.media, styles.videoPlaceholder]} />
           )}
           <View style={styles.playOverlay}>
-            <Text style={styles.playOverlayIcon}>▶</Text>
+            <Ionicons name="play" size={32} color="#fff" />
           </View>
         </View>
       </TouchableOpacity>
@@ -95,19 +114,7 @@ const styles = StyleSheet.create({
   textMine: { color: '#fff', fontSize: 15 },
   textTheirs: { color: '#111', fontSize: 15 },
   highlight: { backgroundColor: '#fde68a', color: '#111' },
-  statusSeen: { fontSize: 10, color: '#60a5fa', alignSelf: 'flex-end', marginTop: 2 },
-  statusDelivered: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.6)',
-    alignSelf: 'flex-end',
-    marginTop: 2,
-  },
-  statusSent: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.4)',
-    alignSelf: 'flex-end',
-    marginTop: 2,
-  },
+  statusIcon: { alignSelf: 'flex-end', marginTop: 2 },
   media: { width: 200, height: 160, borderRadius: 10 },
   videoThumb: { position: 'relative' },
   videoPlaceholder: { backgroundColor: '#333' },
@@ -122,5 +129,4 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 10,
   },
-  playOverlayIcon: { fontSize: 32, color: '#fff' },
 });

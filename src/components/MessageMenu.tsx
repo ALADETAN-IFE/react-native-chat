@@ -1,5 +1,9 @@
 import { Modal, Pressable, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import type { ComponentProps } from 'react';
 import { Message } from '@/types/message';
+
+type IconName = ComponentProps<typeof Ionicons>['name'];
 
 interface Props {
   visible: boolean;
@@ -9,6 +13,25 @@ interface Props {
   onDeleteForMe: () => void;
   onDeleteForEveryone: () => void;
   onReact: () => void;
+}
+
+function MenuItem({
+  icon,
+  label,
+  danger,
+  onPress,
+}: {
+  icon: IconName;
+  label: string;
+  danger?: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.menuItem}>
+      <Ionicons name={icon} size={20} color={danger ? '#ef4444' : '#374151'} />
+      <Text style={[styles.menuItemText, danger && styles.menuItemTextDanger]}>{label}</Text>
+    </TouchableOpacity>
+  );
 }
 
 export function MessageMenu({
@@ -26,24 +49,16 @@ export function MessageMenu({
         <View style={styles.menu}>
           <Text style={styles.menuTitle}>Message options</Text>
           {message.type === 'text' && (
-            <TouchableOpacity onPress={onEdit} style={styles.menuItem}>
-              <Text style={styles.menuItemText}>✏️ Edit</Text>
-            </TouchableOpacity>
+            <MenuItem icon="create-outline" label="Edit" onPress={onEdit} />
           )}
-          <TouchableOpacity onPress={onReact} style={styles.menuItem}>
-            <Text style={styles.menuItemText}>😊 React</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onDeleteForMe} style={styles.menuItem}>
-            <Text style={styles.menuItemText}>🗑️ Delete for me</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          <MenuItem icon="happy-outline" label="React" onPress={onReact} />
+          <MenuItem icon="trash-outline" label="Delete for me" onPress={onDeleteForMe} />
+          <MenuItem
+            icon="trash-outline"
+            label="Delete for everyone"
+            danger
             onPress={onDeleteForEveryone}
-            style={[styles.menuItem, styles.menuItemDanger]}
-          >
-            <Text style={[styles.menuItemText, styles.menuItemTextDanger]}>
-              🗑️ Delete for everyone
-            </Text>
-          </TouchableOpacity>
+          />
         </View>
       </Pressable>
     </Modal>
@@ -75,8 +90,14 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     fontWeight: '600',
   },
-  menuItem: { paddingHorizontal: 12, paddingVertical: 14, borderRadius: 8 },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    borderRadius: 8,
+  },
   menuItemText: { fontSize: 15, color: '#111' },
-  menuItemDanger: { marginTop: 4 },
   menuItemTextDanger: { color: '#ef4444' },
 });

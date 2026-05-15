@@ -17,6 +17,7 @@ import { uploadToCloudinary } from '@/lib/cloudinary';
 import { sendMessage } from '@/lib/firestore';
 import { useChatStore } from '@/stores/chatStore';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { getFirestoreErrorMessage } from '@/utils/errors';
 
 export function useChatRoom(id: string) {
   const currentUid = auth.currentUser?.uid!;
@@ -80,7 +81,7 @@ export function useChatRoom(id: string) {
         });
       },
       (err) => {
-        setError(err.message);
+        setError(getFirestoreErrorMessage(err));
         setLoading(false);
       },
     );

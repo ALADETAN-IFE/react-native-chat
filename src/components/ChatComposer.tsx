@@ -1,4 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Message } from '@/types/message';
 import { AudioRecorder } from './AudioMessage';
 
@@ -25,10 +26,12 @@ export function ChatComposer({
 }: Props) {
   return (
     <View style={styles.container}>
-      {/* Edit mode banner */}
       {editingMessage && (
         <View style={styles.editBanner}>
-          <Text style={styles.editBannerText}>✏️ Editing message</Text>
+          <View style={styles.editBannerLabel}>
+            <Ionicons name="create-outline" size={16} color="#1d4ed8" />
+            <Text style={styles.editBannerText}>Editing message</Text>
+          </View>
           <TouchableOpacity onPress={onCancelEdit}>
             <Text style={styles.editCancelText}>Cancel</Text>
           </TouchableOpacity>
@@ -36,20 +39,19 @@ export function ChatComposer({
       )}
 
       <View style={styles.composer}>
-        {/* Media buttons */}
         {!editingMessage && (
           <>
             <TouchableOpacity
               onPress={() => onPickMedia('image')}
               style={styles.mediaBtn}
             >
-              <Text>📷</Text>
+              <Ionicons name="image-outline" size={22} color="#374151" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onPickMedia('video')}
               style={styles.mediaBtn}
             >
-              <Text>🎥</Text>
+              <Ionicons name="videocam-outline" size={22} color="#374151" />
             </TouchableOpacity>
             <AudioRecorder onRecorded={onAudioRecorded} />
           </>
@@ -71,7 +73,11 @@ export function ChatComposer({
           onPress={handleSend}
           disabled={!text.trim()}
         >
-          <Text style={styles.sendText}>{editingMessage ? '✓' : '↑'}</Text>
+          <Ionicons
+            name={editingMessage ? 'checkmark' : 'arrow-up'}
+            size={20}
+            color="#fff"
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -94,6 +100,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#bfdbfe',
   },
+  editBannerLabel: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   editBannerText: { fontSize: 13, color: '#1d4ed8' },
   editCancelText: { fontSize: 13, color: '#ef4444', fontWeight: '600' },
   composer: {
@@ -128,5 +135,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sendText: { color: '#fff', fontSize: 18, fontWeight: '700' },
 });
