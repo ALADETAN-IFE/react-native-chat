@@ -1,114 +1,163 @@
-import { useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   FlatList,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import {
-  addDoc,
-  collection,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
-} from 'firebase/firestore';
-import { auth, db } from '@/firebase';
-import { Message } from '@/types/message';
+import { MessageBubble } from '@/components/MessageBubble';
+import { TypingDots } from '@/components/TypingDots';
+import { MediaViewer } from '@/components/MediaViewer';
+import { LoadingState, ErrorState } from '@/components/StateViews';
+import { ChatHeader } from '@/components/ChatHeader';
+import { ChatComposer } from '@/components/ChatComposer';
+import { useChatRoom } from '@/hooks/useChatRoom';
 
 export default function ChatRoom() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [text, setText] = useState('');
+  const {
+    currentUid,
+    isOnline,
+    roomMessages,
+    text,
+    setText,
+    loading,
+    error,
+    setError,
+    uploading,
+    searchVisible,
+    setSearchVisible,
+    searchTerm,
+    setSearchTerm,
+    searchLoading,
+    editingMessage,
+    setEditingMessage,
+    viewerUri,
+    setViewerUri,
+    onTyping,
+    handleSend,
+    handlePickMedia,
+    handleAudioRecorded,
+    handleEditPress,
+    otherIsTyping,
+    otherName,
+    displayMessages,
+  } = useChatRoom(id);
 
+  const flatListRef = useRef<FlatList>(null);
+
+  // Auto-scroll to bottom on new messages
   useEffect(() => {
-    if (!id) return;
-    const q = query(
-      collection(db, 'conversations', id, 'messages'),
-      orderBy('createdAt', 'asc'),
-    );
-    const unsub = onSnapshot(q, (snap) => {
-      setMessages(
-        snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Message, 'id'>) })),
-      );
-    });
-    return unsub;
-  }, [id]);
+    if (roomMessages.length > 0) {
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+    }
+  }, [roomMessages.length]);
 
-  const send = async () => {
-    const uid = auth.currentUser?.uid;
-    if (!uid || !id || !text.trim()) return;
-    const body = text;
-    setText('');
-    await addDoc(collection(db, 'conversations', id, 'messages'), {
-      senderId: uid,
-      text: body,
-      createdAt: serverTimestamp(),
-    });
-    await updateDoc(doc(db, 'conversations', id), {
-      lastMessage: body,
-      lastMessageAt: serverTimestamp(),
-    });
-  };
-
-  const currentUid = auth.currentUser?.uid;
+  if (loading) return <LoadingState message="Loading messages..." />;
+  if (error) return <ErrorState message={error} onRetry={() => setError(null)} />;
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={0}
+    >
+      <ChatHeader
+        otherName={otherName}
+        otherIsTyping={otherIsTyping}
+        searchVisible={searchVisible}
+        setSearchVisible={setSearchVisible}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchLoading={searchLoading}
+        noResults={searchTerm !== '' && !searchLoading && displayMessages.length === 0}
+      />
+
+      {/* Offline banner */}
+      {!isOnline && (
+        <View style={styles.offlineBanner}>
+          <Text style={styles.offlineText}>📵 Offline — messages will be queued</Text>
+        </View>
+      )}
+
+      {/* Upload indicator */}
+      {uploading && (
+        <View style={styles.uploadingBanner}>
+          <ActivityIndicator size="small" color="#fff" />
+          <Text style={styles.uploadingText}>Uploading...</Text>
+        </View>
+      )}
+
+      {/* Messages */}
       <FlatList
-        data={messages}
+        ref={flatListRef}
+        data={displayMessages}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
-        renderItem={({ item }) => {
-          const mine = item.senderId === currentUid;
-          return (
-            <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
-              <Text style={mine ? styles.textMine : styles.textTheirs}>{item.text}</Text>
+        renderItem={({ item }) => (
+          <MessageBubble
+            message={item}
+            conversationId={id}
+            currentUid={currentUid}
+            searchTerm={searchTerm}
+            onImagePress={(uri) => setViewerUri(uri)}
+            onEditPress={handleEditPress}
+          />
+        )}
+        ListEmptyComponent={
+          searchTerm ? null : (
+            <View style={styles.emptyChat}>
+              <Text style={styles.emptyChatText}>No messages yet. Say hi! 👋</Text>
             </View>
-          );
-        }}
+          )
+        }
       />
-      <View style={styles.composer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Message"
-          value={text}
-          onChangeText={setText}
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={send}>
-          <Text style={styles.sendText}>Send</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+
+      {/* Typing dots */}
+      {otherIsTyping && <TypingDots />}
+
+      <ChatComposer
+        text={text}
+        setText={setText}
+        onTyping={onTyping}
+        handleSend={handleSend}
+        editingMessage={editingMessage}
+        onCancelEdit={() => {
+          setEditingMessage(null);
+          setText('');
+        }}
+        onPickMedia={handlePickMedia}
+        onAudioRecorded={handleAudioRecorded}
+      />
+
+      {/* Media fullscreen viewer */}
+      <MediaViewer uri={viewerUri} onClose={() => setViewerUri(null)} />
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: 60 },
-  list: { padding: 12, gap: 6 },
-  bubble: { padding: 10, borderRadius: 8, maxWidth: '75%' },
-  bubbleMine: { alignSelf: 'flex-end', backgroundColor: '#222' },
-  bubbleTheirs: { alignSelf: 'flex-start', backgroundColor: '#eee' },
-  textMine: { color: '#fff' },
-  textTheirs: { color: '#111' },
-  composer: {
+  container: { flex: 1, backgroundColor: '#fff', paddingTop: 56 },
+  offlineBanner: {
+    backgroundColor: '#fef3c7',
+    padding: 8,
+    alignItems: 'center',
+  },
+  offlineText: { fontSize: 12, color: '#92400e' },
+  uploadingBanner: {
     flexDirection: 'row',
-    padding: 12,
-    gap: 8,
-    borderTopWidth: 1,
-    borderColor: '#eee',
-  },
-  input: { flex: 1, borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 6 },
-  sendButton: {
     backgroundColor: '#222',
-    paddingHorizontal: 16,
+    padding: 8,
+    alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 6,
+    gap: 8,
   },
-  sendText: { color: '#fff', fontWeight: '600' },
+  uploadingText: { color: '#fff', fontSize: 13 },
+  list: { paddingVertical: 12, gap: 2 },
+  emptyChat: { flex: 1, alignItems: 'center', paddingTop: 60 },
+  emptyChatText: { color: '#9ca3af', fontSize: 14 },
 });
