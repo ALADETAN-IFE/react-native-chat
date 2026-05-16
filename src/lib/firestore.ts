@@ -15,9 +15,17 @@ import { getLastMessagePreview } from '@/utils/messagePreview';
 
 type SendMessagePayload = Omit<Message, 'id' | 'createdAt' | 'status'>;
 
+function removeUndefinedValues<T extends Record<string, unknown>>(value: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(value).filter(([, entry]) => entry !== undefined),
+  ) as Partial<T>;
+}
+
 export async function sendMessage(conversationId: string, payload: SendMessagePayload) {
+  const messageData = removeUndefinedValues(payload);
+
   const ref = await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
-    ...payload,
+    ...messageData,
     status: 'sent',
     createdAt: serverTimestamp(),
   });
