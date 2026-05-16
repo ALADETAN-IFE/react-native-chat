@@ -13,7 +13,14 @@ import { AudioPlayer } from './AudioMessage';
 
 export function StatusIcon({ status }: { status: MessageStatus }) {
   if (status === 'seen') {
-    return <Ionicons name="checkmark-done" size={14} color="#60a5fa" style={styles.statusIcon} />;
+    return (
+      <Ionicons
+        name="checkmark-done"
+        size={14}
+        color="#60a5fa"
+        style={styles.statusIcon}
+      />
+    );
   }
   if (status === 'delivered') {
     return (

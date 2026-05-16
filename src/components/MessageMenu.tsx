@@ -29,7 +29,9 @@ function MenuItem({
   return (
     <TouchableOpacity onPress={onPress} style={styles.menuItem}>
       <Ionicons name={icon} size={20} color={danger ? '#ef4444' : '#374151'} />
-      <Text style={[styles.menuItemText, danger && styles.menuItemTextDanger]}>{label}</Text>
+      <Text style={[styles.menuItemText, danger && styles.menuItemTextDanger]}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 }

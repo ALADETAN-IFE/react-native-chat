@@ -18,9 +18,13 @@ export function useLogin() {
   const [loading, setLoading] = useState(false);
 
   const onSignIn = async () => {
-    if (!email || !password) return Alert.alert('Missing information', 'Please fill in all fields.');
+    if (!email || !password)
+      return Alert.alert('Missing information', 'Please fill in all fields.');
     if (password.length < 6)
-      return Alert.alert('Password too short', 'Your password must be at least 6 characters.');
+      return Alert.alert(
+        'Password too short',
+        'Your password must be at least 6 characters.',
+      );
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -36,7 +40,10 @@ export function useLogin() {
     if (!email || !password || !displayName)
       return Alert.alert('Missing information', 'Please fill in all fields.');
     if (password.length < 6)
-      return Alert.alert('Password too short', 'Your password must be at least 6 characters.');
+      return Alert.alert(
+        'Password too short',
+        'Your password must be at least 6 characters.',
+      );
     setLoading(true);
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
